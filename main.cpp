@@ -10,31 +10,44 @@
 #define RED_LED
 
 #define CODE_SLEEP_TIME 10
+#define CODE_LENGTH 7
 
-int code[7] = { 2, 1, 1, 2, 4, 2, 4 };
+float code[CODE_LENGTH] = { 1, 0.5f, 0.5f, 1, 2, 1, 2 };
 
-void testRhythmCode() {
+bool testRhythmCode() {
 	// Get reference span by listening to the first two taps.
 	int span = 0;
 	int refSpan;
 	while (true) {
 		if (digitalRead(BUTTON, HIGH)) {
 			refSpan = span;
+			break;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(CODE_SLEEP_TIME));
+		span++;
 	}
 
-	int codeIndex = 0;
-	int span = 0;
+	int codeIndex = 1;
+	span = 0;
 	while (true) {
 		if (digitalRead(BUTTON, HIGH)) {
-			
+			float difference = span - refSpan / code[codeIndex];
+			if (difference <= 1 && difference >= -1) {
+				if (codeIndex == CODE_LENGTH - 1) {
+					return true;
+				}
+				codeIndex++;
+				span = 0;
+				continue;
+			}
 		}
 
 		// Sleep for some time and increment the counter so that our loop has a sense of time.
 		std::this_thread::sleep_for(std::chrono::milliseconds(CODE_SLEEP_TIME));
 		span++;
 	}
+
+	return false;
 }
 
 int main() {
@@ -62,13 +75,16 @@ int main() {
 		}
 		if (digitalRead(BUTTON)) {
 			if (armed) {
-				// Do the rythmic code here.
-				
-
-				armed = false;
-				if (!safe) { digitalWrite(BUZZER, LOW); safe = true; }
+				if (testRhythmCode()) {
+					armed = false;
+					digitalWrite(GREEN_LED, HIGH);
+					digitalWrite(RED_LED, LOW);
+					if (!safe) { digitalWrite(BUZZER, LOW); safe = true; }
+				}
 				continue;
 			}
+			digitalWrite(GREEN_LED, LOW);
+			digitalWrite(RED_LED, HIGH);
 			armed = true;
 		}
 	}
