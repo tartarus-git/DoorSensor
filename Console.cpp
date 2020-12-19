@@ -4,6 +4,9 @@
 #include <cstring>
 #include <stdio.h>
 #include <ctime>
+#include <fstream>
+
+SafePointer<ofstream> Console::f;
 
 char Console::timeMarker[TIME_MARKER_INIT_SIZE];
 
