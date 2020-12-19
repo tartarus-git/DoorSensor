@@ -7,23 +7,24 @@
 std::ofstream LifetimeLog::f;
 
 bool LifetimeLog::isAlive = true;
+std::thread Console::lifetimeThread;
 
-std::thread LifetimeLog::start() {
+bool LifetimeLog::start() {
 	f.open("Logs/lifetime.txt");
 	if (f.is_open()) {
-		std::thread lifetimeThread([]() {
+		lifetimeThread = std::thread([]() {
 			while (isAlive) {
 				//char* time; // This whole file system thing needs to be done with a generalized version of Console.h.
 				f << "I am alive.";
 				std::this_thread::sleep_for(std::chrono::seconds(5)); // Check this line.
 			}
 		});
-		return lifetimeThread;
+		return true;
 	}
-	return (std::thread)0;
+	return false;
 }
 
-void LifetimeLog::stop(std::thread lifetimeThread) {
+void LifetimeLog::stop() {
 	isAlive = false;
 	lifetimeThread.join();
 	f.close();
