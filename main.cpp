@@ -3,7 +3,7 @@
 #include <wiringPi.h>
 
 #define SENSOR 15
-#define SENSOR_SOURCE 6
+#define SENSOR_SOURCE 27
 #define BUZZER 16
 #define BUTTON 1
 #define GREEN_LED 4
