@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <ctime>
 
+char Console::timeMarker[TIME_MARKER_INIT_SIZE];
+
 void Console::log(const char* message) {
 	// Get the current time.
 	const std::time_t currentTime = std::time(0);
@@ -12,6 +14,9 @@ void Console::log(const char* message) {
 	strftime(timeMarker, TIME_MARKER_INIT_SIZE, "[%c] ", localCurrentTime);
 	// Get the length of the time marker up to the NUL character.
 	size_t timeLength = strlen(timeMarker);
+
+	// Get the length of the message.
+	size_t length = strlen(message);
 
 	// Create a SafePointer to a new buffer, which will be used to hold the edited message.
 	// Make the length accomodate the time marker, the message, the newline and the NUL character.
@@ -23,7 +28,6 @@ void Console::log(const char* message) {
 
 	// Copy message to the buffer.
 	char* messageStart = buffer.handle + timeLength;
-	size_t length = strlen(message);
 	std::memcpy(messageStart, message, length);
 
 	// Add the newline and the NUL characters.
