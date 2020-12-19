@@ -205,7 +205,8 @@ int main() {
 	}
 
 	// Clean up and exit.
-	showDisarmed();
+	digitalWrite(GREEN_LED, LOW);
+	digitalWrite(RED_LED, LOW);
 	digitalWrite(BUZZER, LOW);
 	digitalWrite(SENSOR_SOURCE, LOW);
 	digitalWrite(BUTTON_SOURCE, LOW);

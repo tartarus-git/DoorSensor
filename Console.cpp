@@ -5,15 +5,10 @@
 #include <stdio.h>
 #include <ctime>
 
-#define TIME_MARKER_INIT_SIZE 512 // Check if there is some sort of standard for this.
-
 void Console::log(const char* message) {
-	size_t length = strlen(message);
-
 	// Get the current time.
 	const std::time_t currentTime = std::time(0);
 	tm* localCurrentTime = localtime(&currentTime);
-	char timeMarker[TIME_MARKER_INIT_SIZE]; // It would be better if this were a static array that's always kept around.
 	strftime(timeMarker, TIME_MARKER_INIT_SIZE, "[%c] ", localCurrentTime);
 	// Get the length of the time marker up to the NUL character.
 	size_t timeLength = strlen(timeMarker);
@@ -26,8 +21,9 @@ void Console::log(const char* message) {
 	// Copy time marker to buffer.
 	std::memcpy(buffer.handle, timeMarker, timeLength);
 
-	// Copy existing data to the buffer.
+	// Copy message to the buffer.
 	char* messageStart = buffer.handle + timeLength;
+	size_t length = strlen(message);
 	std::memcpy(messageStart, message, length);
 
 	// Add the newline and the NUL characters.
