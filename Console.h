@@ -1,6 +1,5 @@
 #pragma once
 
-#include "SafePointer.h"
 #include <fstream>
 
 #define TIME_MARKER_INIT_SIZE 28
