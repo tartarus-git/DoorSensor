@@ -6,7 +6,18 @@
 #include <ctime>
 #include <fstream>
 
-SafePointer<ofstream> Console::f;
+std::ofstream Console::f;
+bool Console::fIsOpen;
+
+void Console::init() {
+	f.open("Logs/log.txt", std::ios::app);
+	if (f.is_open()) { fIsOpen = true; return; }
+	fIsOpen = false;
+}
+
+void Console::dispose() {
+	if (fIsOpen) { f.close(); }
+}
 
 char Console::timeMarker[TIME_MARKER_INIT_SIZE];
 
@@ -38,6 +49,8 @@ void Console::log(const char* message) {
 	*newline = '\n';
 	*(newline + 1) = '\0';
 
+	// Write the buffer to the log file if it was successfully opened.
+	if (fIsOpen) { f << buffer.handle; }
 	// Print the buffer.
 	printf(buffer.handle);
 

@@ -130,6 +130,14 @@ void interruptHandler(int signal) {
 }
 
 int main() {
+	// Initialize Console for log access.
+	Console::init();
+	if (Console::fIsOpen) {
+		Console::log("Successfully opened log file.");
+	} else {
+		Console::log("Encountered error while opening log file.");
+	}
+
 	Console::log("Initializing interrupt handler...");
 
 	struct sigaction sigIntHandler;
@@ -210,5 +218,8 @@ int main() {
 	digitalWrite(BUZZER, LOW);
 	digitalWrite(SENSOR_SOURCE, LOW);
 	digitalWrite(BUTTON_SOURCE, LOW);
+	// Dispose Console so log file gets closed.
+	Console::dispose();
+
 	return 0;
 }
