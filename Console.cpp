@@ -15,9 +15,7 @@ void Console::init() {
 	fIsOpen = false;
 }
 
-void Console::dispose() {
-	if (fIsOpen) { f.close(); }
-}
+void Console::dispose() { f.close(); }
 
 char Console::timeMarker[TIME_MARKER_INIT_SIZE];
 
@@ -50,7 +48,7 @@ void Console::log(const char* message) {
 	*(newline + 1) = '\0';
 
 	// Write the buffer to the log file if it was successfully opened.
-	if (fIsOpen) { f << buffer.handle; }
+	if (fIsOpen) { f << buffer.handle; } // This probably isn't necessary, fix it. Also get rid of that one comment about the size, as it is solved.
 	// Print the buffer.
 	printf(buffer.handle);
 

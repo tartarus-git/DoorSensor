@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <signal.h>
 #include <wiringPi.h>
+#include <thread>
 
 #include "Console.h"
+#include "LifetimeLog.h"
 
 #define SENSOR 15
 #define SENSOR_SOURCE 27
@@ -148,7 +150,12 @@ int main() {
 
    	sigaction(SIGINT, &sigIntHandler, nullptr);
 
-	Console::log("Interrupt handler initialized. Initializing door sensor...");
+	Console::log("Interrupt handler initialized. Starting lifetime logging...");
+
+	// Periodically logs its existence to establish a map of power outages.
+	std::thread lifetimeThread = LifetimeLog::start();
+
+	Console::log("Initializing door sensor...");
 
 	wiringPiSetup();
 	initPins();
@@ -220,6 +227,8 @@ int main() {
 	digitalWrite(BUTTON_SOURCE, LOW);
 	// Dispose Console so log file gets closed.
 	Console::dispose();
+	// Dispose LifetimeLog so lifetime file gets closed.
+	LifetimeLog::stop(lifetimeThread);
 
 	return 0;
 }
