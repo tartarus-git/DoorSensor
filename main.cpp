@@ -8,6 +8,7 @@
 #define SENSOR_SOURCE 27
 #define BUZZER 16
 #define BUTTON 1
+#define BUTTON_SOURCE 13
 #define GREEN_LED 4
 #define RED_LED 5
 
@@ -108,6 +109,7 @@ void initPins() {
 	pinMode(BUZZER, OUTPUT);
 	pinMode(BUTTON, INPUT);
 	pullUpDnControl(BUTTON, PUD_DOWN);
+	pinMode(BUTTON_SOURCE, OUTPUT);
 	pinMode(GREEN_LED, OUTPUT);
 	pinMode(RED_LED, OUTPUT);
 }
@@ -148,6 +150,8 @@ int main() {
 	digitalWrite(BUZZER, LOW);
 	// Activate power source for the sensor.
 	digitalWrite(SENSOR_SOURCE, HIGH);
+	// Activate power source for the button.
+	digitalWrite(BUTTON_SOURCE, HIGH);
 
 	// Main control flags.
 	bool armed = false;
@@ -204,5 +208,6 @@ int main() {
 	showDisarmed();
 	digitalWrite(BUZZER, LOW);
 	digitalWrite(SENSOR_SOURCE, LOW);
+	digitalWrite(BUTTON_SOURCE, LOW);
 	return 0;
 }

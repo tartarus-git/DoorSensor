@@ -4,6 +4,8 @@
 int main() {
 	wiringPiSetup();
 	pinMode(15, INPUT);
+	pinMode(27, OUTPUT);
+	digitalWrite(27, HIGH);
 	pullUpDnControl(15, PUD_DOWN);
 	while (true) {
 		if (digitalRead(15)) {
