@@ -2,6 +2,8 @@
 #include <signal.h>
 #include <wiringPi.h>
 
+#include "Console.h"
+
 #define SENSOR 15
 #define SENSOR_SOURCE 27
 #define BUZZER 16
@@ -38,7 +40,7 @@ int getRefSpan() {
 			// If the cool down time has passed, restart code recognition.
 			if (span >= CODE_COOLDOWN_TIME) {
 				span = 0;
-				printf("Note length was too long, restarting code recognition...\n");
+				Console::log("Note length was too long, restarting code recognition...");
 				continue;
 			}
 
@@ -92,11 +94,11 @@ void validateRhythmCode() {
 	while (isRunning) {
 		// Use first span as reference span. This will be used in the calculations for the remaining rhythm.
 		int refSpan = getRefSpan();
-		printf("Reference span accepted.\n");
+		Console::log("Reference span accepted.");
 		// If the remaining rhythm is correct, break out of the loop.
 		if (traceRhythm(refSpan)) { break; }
 		// If not, restart code recognition.
-		printf("Invalid code. Restarting code recognition...\n");
+		Console::log("Invalid code. Restarting code recognition...");
 	}
 }
 
@@ -121,12 +123,12 @@ void showDisarmed() {
 }
 
 void interruptHandler(int signal) {
-	printf("Interrupt signal caught. Shutting down...\n");
+	Console::log("Interrupt signal caught. Shutting down...");
 	isRunning = false;
 }
 
 int main() {
-	printf("Initializing interrupt handler...\n");
+	Console::log("Initializing interrupt handler...");
 
 	struct sigaction sigIntHandler;
 
@@ -136,7 +138,7 @@ int main() {
 
    	sigaction(SIGINT, &sigIntHandler, nullptr);
 
-	printf("Interrupt handler initialized. Initializing door sensor...\n");
+	Console::log("Interrupt handler initialized. Initializing door sensor...");
 
 	wiringPiSetup();
 	initPins();
@@ -154,7 +156,7 @@ int main() {
 	// Helper flag.
 	bool prevButtonState = false;
 
-	printf("Initialization complete. Entering control loop...\n");
+	Console::log("Initialization complete. Entering control loop...");
 
 	while (isRunning) {
 		// Delaying at the beginning of loop so that the following code can use continue.
@@ -164,7 +166,7 @@ int main() {
 		if (armed && safe && !digitalRead(SENSOR)) {
 			digitalWrite(BUZZER, HIGH);
 			safe = false;
-			printf("DOOR HAS BEEN OPENED WHILE ARMED. SOUNDING ALARM.\n");
+			Console::log("DOOR HAS BEEN OPENED WHILE ARMED. SOUNDING ALARM.");
 		}
 
 		if (digitalRead(BUTTON)) {
@@ -184,14 +186,14 @@ int main() {
 				// Disarm the chip.
 				showDisarmed();
 				armed = false;
-				printf("Rhythm code is acceptable, chip has been disarmed.\n");
+				Console::log("Rhythm code is acceptable, chip has been disarmed.");
 				continue;
 			}
 
 			// If chip is disarmed, arm the chip.
 			showArmed();
 			armed = true;
-			printf("Chip armed.\n");
+			Console::log("Chip armed.");
 			continue;
 		}
 		// If button wasn't pressed, set the previous state to off.
