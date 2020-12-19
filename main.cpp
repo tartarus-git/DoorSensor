@@ -3,6 +3,7 @@
 #include <wiringPi.h>
 
 #define SENSOR 15
+#define SENSOR_SOURCE 6
 #define BUZZER 16
 #define BUTTON 1
 #define GREEN_LED 4
@@ -100,6 +101,7 @@ void validateRhythmCode() {
 }
 
 void initPins() {
+	pinMode(SENSOR_SOURCE, OUTPUT);
 	pinMode(SENSOR, INPUT);
 	pinMode(BUZZER, OUTPUT);
 	pinMode(BUTTON, INPUT);
@@ -142,6 +144,8 @@ int main() {
 	// Reset all devices.
 	showDisarmed();
 	digitalWrite(BUZZER, LOW);
+	// Activate power source for the sensor.
+	digitalWrite(SENSOR_SOURCE, HIGH);
 
 	// Main control flags.
 	bool armed = false;
@@ -197,5 +201,6 @@ int main() {
 	// Clean up and exit.
 	showDisarmed();
 	digitalWrite(BUZZER, LOW);
+	digitalWrite(SENSOR_SOURCE, LOW);
 	return 0;
 }
