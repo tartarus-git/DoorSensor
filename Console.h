@@ -3,7 +3,7 @@
 #include "SafePointer.h"
 #include <fstream>
 
-#define TIME_MARKER_INIT_SIZE 512
+#define TIME_MARKER_INIT_SIZE 28
 
 class Console {
 	static std::ofstream f;
