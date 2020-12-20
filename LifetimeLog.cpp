@@ -6,7 +6,7 @@
 #include <chrono>
 #include <iostream>
 
-#define TIME_STAMP_INIT_SIZE 40
+#define TIME_STAMP_INIT_SIZE 34
 
 std::fstream LifetimeLog::f;
 
@@ -32,14 +32,14 @@ bool LifetimeLog::start() {
 				std::this_thread::sleep_for(std::chrono::seconds(5));
 
 				// Increment lifetime counter to report uptime.
-				f.seekg(-(sizeof(unsigned long long)), std::ios::end);
+				f.seekg(-8, std::ios::end);
 				unsigned long long counter = 0x4100000000000000;
-				f.read((char*)(&counter), sizeof(unsigned long long));
+				f.read((char*)(&counter), 8);
 				std::cout << std::hex << counter << std::endl;
 				counter++;
-				f.seekp((sizeof(unsigned long long)), std::ios::beg);
+				f.seekp(-8, std::ios::end);
 				//f << counter; // Will this actually do the thing I want or should I do this more explicitly with buffers and what not?
-				f.write((char*)(&counter), sizeof(unsigned long long));
+				f.write((char*)(&counter), 8);
 			}
 		});
 		return true;
