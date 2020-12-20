@@ -22,8 +22,8 @@ char Console::timeMarker[TIME_MARKER_INIT_SIZE];
 void Console::log(const char* message) {
 	// Get the current time.
 	const std::time_t currentTime = std::time(0);
-	tm* localCurrentTime = localtime(&currentTime);
-	strftime(timeMarker, TIME_MARKER_INIT_SIZE, "[%c] ", localCurrentTime);
+	std::tm* localCurrentTime = std::localtime(&currentTime);
+	std::strftime(timeMarker, TIME_MARKER_INIT_SIZE, "[%c] ", localCurrentTime);
 	// Get the length of the time marker up to the NUL character.
 	size_t timeLength = strlen(timeMarker);
 

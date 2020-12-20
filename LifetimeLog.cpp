@@ -4,19 +4,23 @@
 #include <thread>
 #include <chrono>
 
+#define TIME_STAMP_INIT_SIZE 26
+
 std::ofstream LifetimeLog::f;
 
 bool LifetimeLog::isAlive = true;
-std::thread Console::lifetimeThread;
+std::thread LifetimeLog::lifetimeThread;
 
 bool LifetimeLog::start() {
 	f.open("Logs/lifetime.txt");
 	if (f.is_open()) {
 		lifetimeThread = std::thread([]() {
 			while (isAlive) {
-				//char* time; // This whole file system thing needs to be done with a generalized version of Console.h.
-				f << "I am alive.";
-				std::this_thread::sleep_for(std::chrono::seconds(5)); // Check this line.
+				// Get the current time and output it to the lifetime log.
+				std::chrono::time_point<std::chrono::system_clock> currentTime = std::chrono::system_clock::now();
+				f << std::chrono::duration_cast<std::chrono::milliseconds>(currentTime.time_since_epoch()).count(); // I remember being able to cast instead of count().
+
+				std::this_thread::sleep_for(std::chrono::seconds(5));
 			}
 		});
 		return true;

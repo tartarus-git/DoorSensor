@@ -11,4 +11,4 @@ class LifetimeLog {
 public:
 	static bool start();
 	static void stop();
-}
+};

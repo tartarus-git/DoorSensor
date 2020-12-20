@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <signal.h>
 #include <wiringPi.h>
-#include <thread>
 
 #include "Console.h"
 #include "LifetimeLog.h"
@@ -134,11 +133,8 @@ void interruptHandler(int signal) {
 int main() {
 	// Initialize Console for log access.
 	Console::init();
-	if (Console::fIsOpen) {
-		Console::log("Successfully opened log file.");
-	} else {
-		Console::log("Encountered error while opening log file.");
-	}
+	if (Console::fIsOpen) { Console::log("Successfully opened log file."); }
+	else { Console::log("Encountered error while opening log file."); }
 
 	Console::log("Initializing interrupt handler...");
 
@@ -150,10 +146,11 @@ int main() {
 
    	sigaction(SIGINT, &sigIntHandler, nullptr);
 
-	Console::log("Interrupt handler initialized. Starting lifetime logging...");
+	Console::log("Interrupt handler initialized. Starting lifetime logger...");
 
-	// Periodically logs its existence to establish a map of power outages.
-	std::thread lifetimeThread = LifetimeLog::start();
+	// Periodically logs itself's existence to establish a map of power outages.
+	if (LifetimeLog::start()) { Console::log("Successfully opened lifetime log file and started lifetime logger."); }
+	else { Console::log("Encountered error while opening lifetime log file. Did not start lifetime logger."); }
 
 	Console::log("Initializing door sensor...");
 
@@ -227,8 +224,8 @@ int main() {
 	digitalWrite(BUTTON_SOURCE, LOW);
 	// Dispose Console so log file gets closed.
 	Console::dispose();
-	// Dispose LifetimeLog so lifetime file gets closed.
-	LifetimeLog::stop(lifetimeThread);
+	// Dispose LifetimeLog so lifetime file gets closed. This blocks for a few seconds while waiting for the threads to join.
+	LifetimeLog::stop();
 
 	return 0;
 }
