@@ -12,3 +12,7 @@ ALSO:
 
 Consider adding one last message at the end so we can sort of time how long the shutdown took.
 Also take a look at that TODO about popping the array off the stack prematurely.
+
+ALSO:
+
+You should definitely make sure all your file saves are flushed immediately, because or else it kind of doesn't work if someone pulls the plug does it?
