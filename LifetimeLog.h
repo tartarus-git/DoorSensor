@@ -4,7 +4,7 @@
 #include <thread>
 
 class LifetimeLog {
-	static std::fstream f;
+	static std::ofstream f;
 
 	static bool isAlive;
 	static std::thread lifetimeThread;
