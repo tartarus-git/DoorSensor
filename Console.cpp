@@ -19,11 +19,13 @@ void Console::dispose() { f.close(); }
 
 char Console::timeMarker[TIME_MARKER_INIT_SIZE];
 
-void Console::log(const char* message) {
+void Console::log(const char* message, bool indent) {
 	// Get the current time.
 	const std::time_t currentTime = std::time(0);
 	std::tm* localCurrentTime = std::localtime(&currentTime);
-	std::strftime(timeMarker, TIME_MARKER_INIT_SIZE, "[%c] ", localCurrentTime);
+	// Convert to string and add indent if necessary.
+	if (indent) { std::strftime(timeMarker, TIME_MARKER_INIT_SIZE, "\t[%c] ", localCurrentTime); }
+	else { std::strftime(timeMarker, TIME_MARKER_INIT_SIZE, "[%c] ", localCurrentTime); }
 	// Get the length of the time marker up to the NUL character.
 	size_t timeLength = strlen(timeMarker);
 
@@ -55,3 +57,5 @@ void Console::log(const char* message) {
 	// Clean up even though technically it isn't necessary because of SafePointer.
 	buffer.dispose();
 }
+
+void Console::log(const char* message) { log(message, false); }

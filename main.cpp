@@ -181,7 +181,7 @@ int main() {
 		if (armed && safe && !digitalRead(SENSOR)) {
 			digitalWrite(BUZZER, HIGH);
 			safe = false;
-			Console::log("DOOR HAS BEEN OPENED WHILE ARMED. SOUNDING ALARM.");
+			Console::log("DOOR HAS BEEN OPENED WHILE ARMED. SOUNDING ALARM.", true);
 		}
 
 		if (digitalRead(BUTTON)) {

@@ -2,7 +2,6 @@ The whole door recording while unarmed is a good idea.
 
 ALSO:
 
-The log file needs to have an indent when the door is opened so you can see the most important data at a glance.
 You need to create interpreter tools for the different data anyway so do that as well.
 The lifetime log file is way to big. You can compress it by just having a huge counter (like long long or something) and incrementing that.
 When the program starts again, just put the human readable date and time on a new line and start a new counter under that. This will make for a super human readable file.
