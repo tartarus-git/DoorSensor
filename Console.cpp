@@ -10,6 +10,8 @@ std::ofstream Console::f;
 bool Console::fIsOpen;
 
 void Console::init() {
+	// Remove buffer so output gets written to the file as soon as possible.
+	f.rdbuf()->pubsetbuf(0, 0);
 	f.open("Logs/log.txt", std::ios::app);
 	if (f.is_open()) { fIsOpen = true; return; }
 	fIsOpen = false;
@@ -49,8 +51,8 @@ void Console::log(const char* message, bool indent) {
 	*newline = '\n';
 	*(newline + 1) = '\0';
 
-	// Write and flush the buffer to the log file if it was successfully opened.
-	if (fIsOpen) { f << buffer.handle << std::flush; }
+	// Write the buffer to the log file if it was successfully opened.
+	if (fIsOpen) { f << buffer.handle; }
 	// Print the buffer.
 	printf(buffer.handle);
 

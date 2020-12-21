@@ -13,6 +13,8 @@ bool LifetimeLog::isAlive = true;
 std::thread LifetimeLog::lifetimeThread;
 
 bool LifetimeLog::start() {
+	// Disable buffering so that output gets written to file as soon as possible.
+	f.rdbuf()->pubsetbuf(0, 0);
 	// std::ios::in is necessary here because of the standard. Without this flag, the file would be truncated.
 	// This flag also prevents ofstream from creating a new file, so the user has to do that beforehand.
 	f.open("Logs/lifetime.txt", std::ios::in | std::ios::binary | std::ios::ate);
@@ -35,7 +37,6 @@ bool LifetimeLog::start() {
 				counter++;
 				f.seekp(-8, std::ios::end);
 				f.write((char*)(&counter), 8);
-				f.flush();
 			}
 		});
 		return true;
