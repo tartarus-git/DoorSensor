@@ -15,10 +15,6 @@ Also take a look at that TODO about popping the array off the stack prematurely.
 
 ALSO:
 
-You should definitely make sure all your file saves are flushed immediately, because or else it kind of doesn't work if someone pulls the plug does it?
-
-ALSO:
-
 Look into using IFTTT for remote access through phone. You're probably going to need https though, so check out the free DynDNS account thing.
 
 ALSO PRETTY COOL:
