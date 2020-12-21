@@ -16,3 +16,15 @@ Also take a look at that TODO about popping the array off the stack prematurely.
 ALSO:
 
 You should definitely make sure all your file saves are flushed immediately, because or else it kind of doesn't work if someone pulls the plug does it?
+
+ALSO:
+
+Look into using IFTTT for remote access through phone. You're probably going to need https though, so check out the free DynDNS account thing.
+
+ALSO PRETTY COOL:
+
+Consider making all the ground pins digital input pins, so that you can log if someone pulls a component out of the breadboard.
+
+TODO:
+
+Research if the direct connection through the sensor is bad for PI, is it like the LED's?
