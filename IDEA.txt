@@ -28,3 +28,5 @@ Consider making all the ground pins digital input pins, so that you can log if s
 TODO:
 
 Research if the direct connection through the sensor is bad for PI, is it like the LED's?
+Ask on reddit or stackoverflow or something about the need to use resistors when using GPIO input as sink. And about built in resistors on the input pins. If that exists.
+How does that stuff work.
