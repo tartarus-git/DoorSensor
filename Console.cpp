@@ -49,8 +49,8 @@ void Console::log(const char* message, bool indent) {
 	*newline = '\n';
 	*(newline + 1) = '\0';
 
-	// Write the buffer to the log file if it was successfully opened.
-	if (fIsOpen) { f << buffer.handle; }
+	// Write and flush the buffer to the log file if it was successfully opened.
+	if (fIsOpen) { f << buffer.handle << std::flush; }
 	// Print the buffer.
 	printf(buffer.handle);
 

@@ -35,6 +35,7 @@ bool LifetimeLog::start() {
 				counter++;
 				f.seekp(-8, std::ios::end);
 				f.write((char*)(&counter), 8);
+				f.flush();
 			}
 		});
 		return true;
