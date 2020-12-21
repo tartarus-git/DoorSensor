@@ -51,6 +51,7 @@ int getRefSpan() {
 		// If button is off, set the previous state to off.
 		prevState = false;
 	}
+	// This is only reached when the program is shutting down.
 	return 0;
 }
 
@@ -88,6 +89,7 @@ bool traceRhythm(int refSpan) {
 		// If the button is off, set the previous button state to off.
 		prevState = false;
 	}
+	// This is only reached when the program is shutting down.
 	return true;
 }
 
@@ -95,6 +97,7 @@ void validateRhythmCode() {
 	while (isRunning) {
 		// Use first span as reference span. This will be used in the calculations for the remaining rhythm.
 		int refSpan = getRefSpan();
+		if (refSpan == 0) { break; }
 		Console::log("Reference span accepted.");
 		// If the remaining rhythm is correct, break out of the loop.
 		if (traceRhythm(refSpan)) { break; }
@@ -173,7 +176,7 @@ int main() {
 
 	Console::log("Initialization complete. Entering control loop...");
 
-	while (isRunning) {
+	do {
 		// Delaying at the beginning of loop so that the following code can use continue.
 		delay(SLEEP_TIME);
 
@@ -193,6 +196,10 @@ int main() {
 			if (armed) {
 				// Pause here until the correct code is entered.
 				validateRhythmCode();
+
+				// If the program is shutting down, exit loop before unnecessary work is done.
+				if (!isRunning) { break; }
+
 				// Reset the buzzer if needed.
 				if (!safe) {
 					digitalWrite(BUZZER, LOW);
@@ -213,7 +220,7 @@ int main() {
 		}
 		// If button wasn't pressed, set the previous state to off.
 		prevButtonState = false;
-	}
+	} while (isRunning);
 
 	// Clean up and exit.
 	digitalWrite(GREEN_LED, LOW);
