@@ -2,7 +2,8 @@
 
 #include <fstream>
 
-#define TIME_MARKER_INIT_SIZE 29
+// 28 + 10 <-- supports 11 levels of indentation.
+#define TIME_MARKER_INIT_SIZE 38
 
 class Console {
 	static std::ofstream f;
@@ -14,7 +15,7 @@ public:
 	Console() = delete;
 	static void init();
 
-	static void log(const char* message, bool indent);
+	static void log(const char* message, int indent);
 	static void log(const char* message);
 
 	static void dispose();

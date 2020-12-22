@@ -1,7 +1,3 @@
-The whole door recording while unarmed is a good idea.
-
-ALSO:
-
 You need to create interpreter tools for the different data anyway so do that as well.
 
 ALSO TODO:
@@ -10,7 +6,6 @@ Add camera with OpenCV to the whole arrangement.
 
 ALSO:
 
-Consider adding one last message at the end so we can sort of time how long the shutdown took.
 Also take a look at that TODO about popping the array off the stack prematurely.
 
 ALSO:

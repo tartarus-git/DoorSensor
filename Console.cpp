@@ -21,13 +21,13 @@ void Console::dispose() { f.close(); }
 
 char Console::timeMarker[TIME_MARKER_INIT_SIZE];
 
-void Console::log(const char* message, bool indent) {
+void Console::log(const char* message, int indent) {
 	// Get the current time.
 	const std::time_t currentTime = std::time(0);
 	std::tm* localCurrentTime = std::localtime(&currentTime);
 	// Convert to string and add indent if necessary.
-	if (indent) { std::strftime(timeMarker, TIME_MARKER_INIT_SIZE, "\t[%c] ", localCurrentTime); }
-	else { std::strftime(timeMarker, TIME_MARKER_INIT_SIZE, "[%c] ", localCurrentTime); }
+	for (int i = 0; i < indent; i++) { timeMarker[i] = '\t'; }
+	std::strftime(timeMarker + indent, TIME_MARKER_INIT_SIZE - indent, "[%c] ", localCurrentTime);
 	// Get the length of the time marker up to the NUL character.
 	size_t timeLength = strlen(timeMarker);
 
@@ -60,4 +60,4 @@ void Console::log(const char* message, bool indent) {
 	buffer.dispose();
 }
 
-void Console::log(const char* message) { log(message, false); }
+void Console::log(const char* message) { log(message, 0); }

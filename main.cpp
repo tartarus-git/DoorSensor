@@ -12,6 +12,7 @@
 #define GREEN_LED 4
 #define RED_LED 5
 
+#define STATE_SOFTENER_TRIGGER 10
 #define SLEEP_TIME 10
 
 #define CODE_LENGTH 5
@@ -169,9 +170,11 @@ int main() {
 
 	// Main control flags.
 	bool armed = false;
-	bool safe = true;
+	bool state = true;
 
-	// Helper flag.
+	// Helper flags.
+	// stateSoftener helps us get past the oscillation of the sensor when the door is open.
+	int stateSoftener = 0;
 	bool prevButtonState = false;
 
 	Console::log("Initialization complete. Entering control loop...");
@@ -180,11 +183,26 @@ int main() {
 		// Delaying at the beginning of loop so that the following code can use continue.
 		delay(SLEEP_TIME);
 
-		// Activate buzzer if door is opened.
-		if (armed && safe && !digitalRead(SENSOR)) {
-			digitalWrite(BUZZER, HIGH);
-			safe = false;
-			Console::log("DOOR HAS BEEN OPENED WHILE ARMED. SOUNDING ALARM.", true);
+		// Check if the door is open or not.
+		if (digitalRead(SENSOR)) {
+			if (!state) {
+				if (stateSoftener == STATE_SOFTENER_TRIGGER) {
+					Console::log("Door has been closed.", 1);
+					state = true;
+					stateSoftener = 0;
+				} else { stateSoftener++; }
+			}
+		} else {
+			if (state) {
+				if (armed) {
+					Console::log("DOOR HAS BEEN OPENED WHILE ARMED. SOUNDING ALARM...", 2);
+					digitalWrite(BUZZER, HIGH);
+				} else {
+					Console::log("Door has been opened.", 1);
+				}
+				state = false;
+			}
+			stateSoftener = 0;
 		}
 
 		if (digitalRead(BUTTON)) {
@@ -200,22 +218,20 @@ int main() {
 				// If the program is shutting down, exit loop before unnecessary work is done.
 				if (!isRunning) { break; }
 
-				// Reset the buzzer if needed.
-				if (!safe) {
-					digitalWrite(BUZZER, LOW);
-					safe = true;
-				}
+				// Reset the buzzer.
+				digitalWrite(BUZZER, LOW);
+
 				// Disarm the chip.
-				showDisarmed();
-				armed = false;
 				Console::log("Rhythm code is acceptable, chip has been disarmed.");
+				armed = false;
+				showDisarmed();
 				continue;
 			}
 
 			// If chip is disarmed, arm the chip.
+			Console::log("Chip armed.");
 			showArmed();
 			armed = true;
-			Console::log("Chip armed.");
 			continue;
 		}
 		// If button wasn't pressed, set the previous state to off.
