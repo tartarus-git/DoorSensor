@@ -9,7 +9,7 @@
 #define CAPTURE_INTERVAL 40
 
 #define OUTPUT_PATH "../output.avi"
-#define OUTPUT_MAX_BLOCKS 500
+#define OUTPUT_MAX_BLOCKS 50000
 
 cv::VideoCapture Camera::cap;
 

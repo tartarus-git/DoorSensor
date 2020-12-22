@@ -191,7 +191,7 @@ int main() {
 
 		// Check if the camera output file overflowed.
 		if (Camera::overflowed) {
-			// Report this.
+			Console::log("Camera output file overflowed. Recording has been disabled.", 2);
 		}
 
 		// Check if the door is open or not.
@@ -244,8 +244,7 @@ int main() {
 			// If chip is disarmed, arm the chip.
 			Console::log("Chip armed.");
 			showArmed();
-			armed = true; // Put the disarming and door open loop inside here so that they start here. That will make the whole thing more efficient.
-			// Temporary fix:
+			armed = true;
 			state = true;
 			continue;
 		}
