@@ -147,7 +147,7 @@ int main() {
    	sigemptyset(&sigIntHandler.sa_mask);
    	sigIntHandler.sa_flags = 0;
 
-   	sigaction(SIGINT, &sigIntHandler, nullptr);
+   	sigaction(SIGINT, &sigIntHandler, nullptr); // nullptr?
 
 	Console::log("Interrupt handler initialized. Starting lifetime logger...");
 
@@ -177,6 +177,11 @@ int main() {
 	int stateSoftener = 0;
 	bool prevButtonState = false;
 
+	Console::log("Initialization complete. Initializing camera...");
+
+	if (Camera::init()) { Console::log("Successfully initialized camera."); }
+	else { Console::log("Encountered error while initializing camera."); }
+
 	Console::log("Initialization complete. Entering control loop...");
 
 	do {
@@ -197,6 +202,7 @@ int main() {
 				if (armed) {
 					Console::log("DOOR HAS BEEN OPENED WHILE ARMED. SOUNDING ALARM...", 2);
 					digitalWrite(BUZZER, HIGH);
+					Camera::record(); // We should be using a thread pool here, how do you do that with std::thread?
 				} else {
 					Console::log("Door has been opened.", 1);
 				}
@@ -225,6 +231,7 @@ int main() {
 				Console::log("Rhythm code is acceptable, chip has been disarmed.");
 				armed = false;
 				showDisarmed();
+				Camera::stop();
 				continue;
 			}
 
@@ -248,6 +255,8 @@ int main() {
 	Console::dispose();
 	// Dispose LifetimeLog so lifetime file gets closed. This blocks for a few seconds while waiting for the threads to join.
 	LifetimeLog::stop();
+	// Dispose Camera.
+	Camera::dispose();
 
 	Console::log("Shutdown complete.");
 	return 0;
