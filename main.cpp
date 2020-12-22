@@ -233,5 +233,6 @@ int main() {
 	// Dispose LifetimeLog so lifetime file gets closed. This blocks for a few seconds while waiting for the threads to join.
 	LifetimeLog::stop();
 
+	Console::log("Shutdown complete.");
 	return 0;
 }
