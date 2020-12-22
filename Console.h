@@ -8,7 +8,7 @@
 class Console {
 	static std::ofstream f;
 
-	static char timeMarker[TIME_MARKER_INIT_SIZE]; // Check if there is some sort of standard for the size of this (or calculate).
+	static char timeMarker[TIME_MARKER_INIT_SIZE];
 public:
 	static bool fIsOpen;
 

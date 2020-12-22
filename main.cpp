@@ -3,6 +3,7 @@
 
 #include "Console.h"
 #include "LifetimeLog.h"
+#include "Camera.h"
 
 #define SENSOR 15
 #define SENSOR_SOURCE 27

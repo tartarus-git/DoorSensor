@@ -1,6 +1,7 @@
 #pragma once
 
-#include <opencv2/opencv.h>
+#include <opencv2/opencv.hpp>
+#include <thread>
 
 class Camera {
 	static cv::VideoCapture cap;
