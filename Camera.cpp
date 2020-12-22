@@ -54,6 +54,8 @@ void Camera::record() {
                 	output.write(frame);
 
 			// Make sure the file size doesn't get out of hand.
+			// TODO: If file size is proportional to number of frames and bytes and such, because of possible lack of compression, then just count frames 
+			// instead of checking file size.
 			stat(OUTPUT_PATH, &statBuf);
 			printf("%d\n", (int)statBuf.st_blocks);
 			if (statBuf.st_blocks > OUTPUT_MAX_BLOCKS) {
