@@ -15,7 +15,7 @@ bool Camera::init() {
 	cap = cv::VideoCapture(0);
 	if (cap.isOpened()) {
         	// Create VideoWriter object and set codec, fps, etc...
-        	output = cv::VideoWriter("output.avi", cv::VideoWriter::fourcc('X', '2', '6', '4'), PLAYBACK_FPS, 
+        	output = cv::VideoWriter("../output.avi", cv::VideoWriter::fourcc('X', '2', '6', '4'), PLAYBACK_FPS, 
 			cv::Size(cap.get(cv::CAP_PROP_FRAME_WIDTH), cap.get(cv::CAP_PROP_FRAME_HEIGHT)));
 		// Find a way to validate the VideoWriter.
 		failure = false;
