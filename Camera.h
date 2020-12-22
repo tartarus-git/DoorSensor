@@ -14,6 +14,7 @@ public:
 	Camera() = delete;
 	static bool init();
 
+	static bool overflowed;
 	static void record();
 	static void stop();
 

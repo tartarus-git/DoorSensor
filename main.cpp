@@ -189,6 +189,11 @@ int main() {
 		// Delaying at the beginning of loop so that the following code can use continue.
 		delay(SLEEP_TIME);
 
+		// Check if the camera output file overflowed.
+		if (Camera::overflowed) {
+			// Report this.
+		}
+
 		// Check if the door is open or not.
 		if (digitalRead(SENSOR)) {
 			if (!state) {
@@ -239,7 +244,9 @@ int main() {
 			// If chip is disarmed, arm the chip.
 			Console::log("Chip armed.");
 			showArmed();
-			armed = true;
+			armed = true; // Put the disarming and door open loop inside here so that they start here. That will make the whole thing more efficient.
+			// Temporary fix:
+			state = true;
 			continue;
 		}
 		// If button wasn't pressed, set the previous state to off.
@@ -256,7 +263,8 @@ int main() {
 	Console::dispose();
 	// Dispose LifetimeLog so lifetime file gets closed. This blocks for a few seconds while waiting for the threads to join.
 	LifetimeLog::stop();
-	// Dispose Camera.
+	// Stop and dispose Camera.
+	Camera::stop();
 	Camera::dispose();
 
 	Console::log("Shutdown complete.");

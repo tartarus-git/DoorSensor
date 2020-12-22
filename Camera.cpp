@@ -9,6 +9,11 @@
 #define CAPTURE_INTERVAL 40
 
 #define OUTPUT_PATH "../output.avi"
+#define OUTPUT_MAX_BLOCKS 500
+
+cv::VideoCapture Camera::cap;
+
+cv::VideoWriter Camera::output;
 
 bool Camera::failure;
 
@@ -19,15 +24,21 @@ bool Camera::init() {
         	// Create VideoWriter object and set codec, fps, etc...
         	output = cv::VideoWriter(OUTPUT_PATH, cv::VideoWriter::fourcc('X', '2', '6', '4'), PLAYBACK_FPS, 
 			cv::Size(cap.get(cv::CAP_PROP_FRAME_WIDTH), cap.get(cv::CAP_PROP_FRAME_HEIGHT)));
-		// Find a way to validate the VideoWriter.
-		failure = false;
-		return true;
+		if (output.isOpened()) {
+			failure = false;
+			return true;
+		}
+		cap.release();
 	}
 	failure = true;
 	return false;
 }
 
 bool Camera::isAlive;
+
+bool Camera::overflowed = false;
+
+std::thread Camera::recordThread;
 
 void Camera::record() {
 	if (failure) { return; }
@@ -38,23 +49,31 @@ void Camera::record() {
 		cv::Mat frame;
 		struct stat statBuf;
 		while (isAlive) {
+			// Capture and write 1 frame.
                 	cap >> frame;
                 	output.write(frame);
 
 			// Make sure the file size doesn't get out of hand.
 			stat(OUTPUT_PATH, &statBuf);
-			printf("%d", (int)statBuf.st_blocks);
+			printf("%d\n", (int)statBuf.st_blocks);
+			if (statBuf.st_blocks > OUTPUT_MAX_BLOCKS) {
+				overflowed = true;
+				failure = true;
+				output.release();
+				cap.release();
+				break;
+			}
 
-                	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                	std::this_thread::sleep_for(std::chrono::milliseconds(CAPTURE_INTERVAL));
         	}
 	});
 }
 
 void Camera::stop() {
-	if (failure) { return; }
-
-	isAlive = false;
-	recordThread.join();
+	if (isAlive) {
+		isAlive = false;
+		recordThread.join();
+	}
 }
 
 void Camera::dispose() {
