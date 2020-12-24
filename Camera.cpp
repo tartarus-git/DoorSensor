@@ -5,11 +5,11 @@
 #include <sys/stat.h>
 #include <chrono>
 
-#define PLAYBACK_FPS 25
-#define CAPTURE_INTERVAL 40
+#define PLAYBACK_FPS 10
+#define CAPTURE_INTERVAL 100000
 
 #define OUTPUT_PATH "../output.avi"
-#define OUTPUT_MAX_BLOCKS 50000
+#define OUTPUT_MAX_BLOCKS 10485760 // output.avi has exactly 5 GB of space for itself.
 
 cv::VideoCapture Camera::cap;
 
@@ -49,6 +49,8 @@ void Camera::record() {
 		cv::Mat frame;
 		struct stat statBuf;
 		while (isAlive) {
+			auto start = std::chrono::high_resolution_clock::now();
+
 			// Capture and write 1 frame.
                 	cap >> frame;
                 	output.write(frame);
@@ -57,7 +59,6 @@ void Camera::record() {
 			// TODO: If file size is proportional to number of frames and bytes and such, because of possible lack of compression, then just count frames 
 			// instead of checking file size.
 			stat(OUTPUT_PATH, &statBuf);
-			printf("%d\n", (int)statBuf.st_blocks);
 			if (statBuf.st_blocks > OUTPUT_MAX_BLOCKS) {
 				overflowed = true;
 				failure = true;
@@ -66,8 +67,10 @@ void Camera::record() {
 				break;
 			}
 
-                	std::this_thread::sleep_for(std::chrono::milliseconds(CAPTURE_INTERVAL));
-        	}
+			long long duration = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count();
+			if (duration < CAPTURE_INTERVAL) { std::this_thread::sleep_for(std::chrono::microseconds(CAPTURE_INTERVAL - duration)); }
+			//else { printf("This sux."); } TODO: Make some sort of log entry that alerts when this happens. Obviously not simple because seperate thread.
+		}
 	});
 }
 

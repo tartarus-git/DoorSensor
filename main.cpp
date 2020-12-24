@@ -37,7 +37,7 @@ int getRefSpan() {
 
 		// If the cool down time has passed, start transferring control back to the control loop.
 		if (span >= CODE_COOLDOWN_TIME) {
-			Console::log("Reference span was too long.");
+			Console::log("Reference span was too long.", 1);
 			return 0;
 		}
 
@@ -68,7 +68,7 @@ bool traceRhythm(int refSpan) {
 
 		// If cooldown time has passed, start transferring control back to the control loop.
 		if (span >= CODE_COOLDOWN_TIME) {
-			Console::log("A note wasn't within cooldown bounds. Invalid rhythm code.");
+			Console::log("A note wasn't within cooldown bounds. Invalid rhythm code.", 1);
 			return false;
 		}
 
@@ -88,9 +88,9 @@ bool traceRhythm(int refSpan) {
 				continue;
 			}
 			// If the note isn't within acceptable boundaries, delay for cooldown and start transferring control back to the control loop.
-			Console::log("Invalid rhythm code. Cooling down...");
+			Console::log("Invalid rhythm code. Cooling down...", 1);
 			delay(SLEEP_TIME * CODE_COOLDOWN_TIME); // So that codes that are too long don't restart code recognition too fast.
-			Console::log("Cooled down.");
+			Console::log("Cooled down.", 1);
 			return false;
 		}
 		// If the button is off, set the previous button state to off.
@@ -105,7 +105,7 @@ bool validateRhythmCode() {
 	int refSpan = getRefSpan();
 	// If the reference span is incorrect, report failure and transfer control back to the control loop.
 	if (refSpan == 0) { return false; }
-	Console::log("Reference span accepted.");
+	Console::log("Reference span accepted.", 1);
 
 	// If we've gotten this far, return the success/failure of the remaining code detection back to the control loop.
 	return traceRhythm(refSpan);
@@ -133,7 +133,7 @@ void showDisarmed() {
 }
 
 void interruptHandler(int signal) {
-	Console::log("Interrupt signal caught. Shutting down...");
+	Console::log("Interrupt signal caught. Shutting down...", 2);
 	isRunning = false;
 }
 
@@ -187,7 +187,7 @@ int main() {
 	if (Camera::init()) { Console::log("Successfully initialized camera."); }
 	else { Console::log("Encountered error while initializing camera."); }
 
-	Console::log("Initialization complete. Entering control loop...");
+	Console::log("Entering control loop...");
 
 	do {
 		// Delaying at the beginning of loop so that the following code can use continue.
@@ -210,9 +210,9 @@ int main() {
 		} else {
 			if (state) {
 				if (armed && safe) {
-					Console::log("DOOR HAS BEEN OPENED WHILE ARMED. SOUNDING ALARM...", 2);
+					Console::log("DOOR HAS BEEN OPENED WHILE ARMED. STARTING RECORDING AND SOUNDING ALARM...", 2);
 					digitalWrite(BUZZER, HIGH);
-					Camera::record(); // We should be using a thread pool here, how do you do that with std::thread?
+					Camera::record(); // We should be using a thread pool here, how do you do that with std::thread? TODO
 					safe = false;
 				} else {
 					Console::log("Door has been opened.", 1);
@@ -229,13 +229,13 @@ int main() {
 
 			// If chip is armed, validate rhythm code before disarming.
 			if (armed) {
-				Console::log("Disarm attempted, validating rhythm code.");
+				Console::log("Disarm attempted, validating rhythm code.", 1);
 				if (validateRhythmCode()) {
 					// Reset the buzzer.
 					digitalWrite(BUZZER, LOW);
 
 					// Disarm the chip.
-					Console::log("Rhythm code is acceptable, chip has been disarmed.");
+					Console::log("Rhythm code is acceptable, chip has been disarmed.", 1);
 					armed = false;
 					showDisarmed();
 					Camera::stop();
@@ -244,7 +244,7 @@ int main() {
 			}
 
 			// If chip is disarmed, arm the chip.
-			Console::log("Chip armed.");
+			Console::log("Chip armed.", 1);
 			showArmed();
 			armed = true;
 			safe = true;
@@ -270,6 +270,6 @@ int main() {
 	Camera::stop();
 	Camera::dispose();
 
-	Console::log("Shutdown complete.");
+	Console::log("Shutdown complete.", 2);
 	return 0;
 }

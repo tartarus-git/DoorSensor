@@ -1,9 +1,5 @@
 You need to create interpreter tools for the different data anyway so do that as well.
 
-ALSO TODO:
-
-Add camera with OpenCV to the whole arrangement.
-
 ALSO:
 
 Also take a look at that TODO about popping the array off the stack prematurely.
