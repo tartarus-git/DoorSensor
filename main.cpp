@@ -48,6 +48,7 @@ int getRefSpan() {
 			// If everything is successful, return the reference span.
 			return span;
 		}
+
 		// If button is off, set the previous state to off.
 		prevState = false;
 	}
@@ -65,8 +66,11 @@ bool traceRhythm(int refSpan) {
 		delay(SLEEP_TIME);
 		span++;
 
-		// If cool down time has passed, start transferring control back to the control loop.
-		if (span >= CODE_COOLDOWN_TIME) { return false; }
+		// If cooldown time has passed, start transferring control back to the control loop.
+		if (span >= CODE_COOLDOWN_TIME) {
+			Console::log("A note wasn't within cooldown bounds. Invalid rhythm code.");
+			return false;
+		}
 
 		if (digitalRead(BUTTON)) {
 			// Only activate if it's a key down event.
@@ -83,8 +87,10 @@ bool traceRhythm(int refSpan) {
 				span = 0;
 				continue;
 			}
-			// If the note isn't within acceptable boundaries, start transferring control back to the control loop.
-			// Log the thing here instead of doing the continue thing on the other side. TODO
+			// If the note isn't within acceptable boundaries, delay for cooldown and start transferring control back to the control loop.
+			Console::log("Invalid rhythm code. Cooling down...");
+			delay(SLEEP_TIME * CODE_COOLDOWN_TIME); // So that codes that are too long don't restart code recognition too fast.
+			Console::log("Cooled down.");
 			return false;
 		}
 		// If the button is off, set the previous button state to off.
@@ -98,7 +104,7 @@ bool validateRhythmCode() {
 	// Use first span as reference span. This will be used in the calculations for the remaining rhythm.
 	int refSpan = getRefSpan();
 	// If the reference span is incorrect, report failure and transfer control back to the control loop.
-	if (refSpan == 0) { printf("test"); return false; }
+	if (refSpan == 0) { return false; }
 	Console::log("Reference span accepted.");
 
 	// If we've gotten this far, return the success/failure of the remaining code detection back to the control loop.
@@ -145,7 +151,7 @@ int main() {
    	sigemptyset(&sigIntHandler.sa_mask);
    	sigIntHandler.sa_flags = 0;
 
-   	sigaction(SIGINT, &sigIntHandler, nullptr); // nullptr?
+   	sigaction(SIGINT, &sigIntHandler, nullptr); // nullptr? TODO
 
 	Console::log("Interrupt handler initialized. Starting lifetime logger...");
 
@@ -183,7 +189,7 @@ int main() {
 
 	Console::log("Initialization complete. Entering control loop...");
 
-	while (true) {
+	do {
 		// Delaying at the beginning of loop so that the following code can use continue.
 		delay(SLEEP_TIME);
 
@@ -206,8 +212,8 @@ int main() {
 				if (armed && safe) {
 					Console::log("DOOR HAS BEEN OPENED WHILE ARMED. SOUNDING ALARM...", 2);
 					digitalWrite(BUZZER, HIGH);
-					safe = false;
 					Camera::record(); // We should be using a thread pool here, how do you do that with std::thread?
+					safe = false;
 				} else {
 					Console::log("Door has been opened.", 1);
 				}
@@ -218,10 +224,7 @@ int main() {
 
 		if (digitalRead(BUTTON)) {
 			// Only activate if it's a key down event.
-			if (prevButtonState) {
-				if (isRunning) { continue; }
-				break;
-			}
+			if (prevButtonState) { continue; }
 			prevButtonState = true;
 
 			// If chip is armed, validate rhythm code before disarming.
@@ -236,15 +239,8 @@ int main() {
 					armed = false;
 					showDisarmed();
 					Camera::stop();
-
-					if (isRunning) { continue; }
-					break;
 				}
-				if (isRunning) {
-					Console::log("Invalid rhythm code.");
-					continue;
-				}
-				break;
+				continue;
 			}
 
 			// If chip is disarmed, arm the chip.
@@ -254,15 +250,11 @@ int main() {
 			safe = true;
 			state = true;
 
-			if (isRunning) { continue; }
-			break;
+			continue;
 		}
 		// If button wasn't pressed, set the previous state to off.
 		prevButtonState = false;
-
-		if (isRunning) { continue; }
-		break;
-	}
+	} while (isRunning);
 
 	// Clean up and exit.
 	digitalWrite(GREEN_LED, LOW);
