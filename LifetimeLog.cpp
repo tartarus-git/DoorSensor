@@ -17,7 +17,7 @@ bool LifetimeLog::start() {
 	f.rdbuf()->pubsetbuf(0, 0);
 	// std::ios::in is necessary here because of the standard. Without this flag, the file would be truncated.
 	// This flag also prevents ofstream from creating a new file, so the user has to do that beforehand.
-	f.open("Logs/lifetime.txt", std::ios::in | std::ios::binary | std::ios::ate);
+	f.open("../Logs/lifetime.txt", std::ios::in | std::ios::binary | std::ios::ate);
 	if (f.is_open()) {
 		// Get the current time and output it to the lifetime log to announce startup.
 		char timeStamp[TIME_STAMP_INIT_SIZE];

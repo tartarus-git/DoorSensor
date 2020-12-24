@@ -12,7 +12,7 @@ bool Console::fIsOpen;
 void Console::init() {
 	// Remove buffer so output gets written to the file as soon as possible.
 	f.rdbuf()->pubsetbuf(0, 0);
-	f.open("Logs/log.txt", std::ios::app);
+	f.open("../Logs/log.txt", std::ios::app);
 	if (f.is_open()) { fIsOpen = true; return; }
 	fIsOpen = false;
 }
