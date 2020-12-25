@@ -151,7 +151,7 @@ int main() {
    	sigemptyset(&sigIntHandler.sa_mask);
    	sigIntHandler.sa_flags = 0;
 
-   	sigaction(SIGINT, &sigIntHandler, nullptr); // nullptr? TODO
+   	sigaction(SIGINT, &sigIntHandler, nullptr);
 
 	Console::log("Interrupt handler initialized. Starting lifetime logger...");
 
