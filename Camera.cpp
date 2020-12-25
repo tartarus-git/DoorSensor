@@ -82,8 +82,6 @@ void Camera::stop() {
 }
 
 void Camera::dispose() {
-	if (failure) { return; }
-
 	output.release();
 	cap.release();
 }
