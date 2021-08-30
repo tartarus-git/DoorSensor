@@ -16,13 +16,10 @@
 #define STATE_SOFTENER_TRIGGER 10
 #define SLEEP_TIME 10
 
-#define CODE_LENGTH 5
 #define CODE_WINDOW 10
 #define CODE_COOLDOWN_TIME 200
 
-// First note is omitted because it is always 1.
-// Last note is omitted because the span it describes is useless.
-const float code[CODE_LENGTH] = { 0.5f, 0.5f, 1, 2, 1 };
+#include "../rhythmCode.h"
 
 bool isRunning = true;
 
