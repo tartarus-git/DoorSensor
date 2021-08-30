@@ -13,7 +13,7 @@
 #define GREEN_LED 4
 #define RED_LED 5
 
-#define STATE_SOFTENER_TRIGGER 10
+#define STATE_SOFTENER_TRIGGER 20
 #define SLEEP_TIME 10
 
 #define CODE_WINDOW 10
