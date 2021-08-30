@@ -1,6 +1,5 @@
 #include "Console.h"
 
-#include "SafePointer.h"
 #include <cstring>
 #include <stdio.h>
 #include <ctime>
@@ -34,16 +33,13 @@ void Console::log(const char* message, int indent) {
 	// Get the length of the message.
 	size_t length = strlen(message);
 
-	// Create a SafePointer to a new buffer, which will be used to hold the edited message.
-	// Make the length accomodate the time marker, the message, the newline and the NUL character.
-	SafePointer<char*> buffer(new char[timeLength + length + 2], [](char* handle) { delete[] handle; });
-	// I could of used unique_ptr for this, and maybe I should, I just forgot about it. This works just as well though doesn't it?
+	char* buffer = new char[timeLength + length + 2];
 
 	// Copy time marker to buffer.
-	std::memcpy(buffer.handle, timeMarker, timeLength);
+	std::memcpy(buffer, timeMarker, timeLength);
 
 	// Copy message to the buffer.
-	char* messageStart = buffer.handle + timeLength;
+	char* messageStart = buffer + timeLength;
 	std::memcpy(messageStart, message, length);
 
 	// Add the newline and the NUL characters.
@@ -52,12 +48,11 @@ void Console::log(const char* message, int indent) {
 	*(newline + 1) = '\0';
 
 	// Write the buffer to the log file if it was successfully opened.
-	if (fIsOpen) { f << buffer.handle; }
+	if (fIsOpen) { f << buffer; }
 	// Print the buffer.
-	printf(buffer.handle);
+	printf(buffer);
 
-	// Clean up even though technically it isn't necessary because of SafePointer.
-	buffer.dispose();
+	delete[] buffer;												// Delete the buffer.
 }
 
 void Console::log(const char* message) { log(message, 0); }
