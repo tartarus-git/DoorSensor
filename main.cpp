@@ -129,8 +129,8 @@ void showDisarmed() {
 	digitalWrite(RED_LED, LOW);
 }
 
-void interruptHandler(int signal) {
-	Console::log("Interrupt signal caught. Shutting down...", 2);
+void signalHandler(int signal) {
+	Console::log("Signal caught. Shutting down...", 2);
 	isRunning = false;
 }
 
@@ -140,17 +140,12 @@ int main() {
 	if (Console::fIsOpen) { Console::log("Successfully opened log file."); }
 	else { Console::log("Encountered error while opening log file."); }
 
-	Console::log("Initializing interrupt handler...");
+	Console::log("Initializing signal handler...");
 
-	struct sigaction sigIntHandler;
+   	signal(SIGINT, signalHandler);
+	signal(SIGTERM, signalHandler);
 
-  	sigIntHandler.sa_handler = interruptHandler;
-   	sigemptyset(&sigIntHandler.sa_mask);
-   	sigIntHandler.sa_flags = 0;
-
-   	sigaction(SIGINT, &sigIntHandler, nullptr);
-
-	Console::log("Interrupt handler initialized. Starting lifetime logger...");
+	Console::log("Signal handler initialized. Starting lifetime logger...");
 
 	// Periodically logs itself's existence to establish a map of power outages.
 	if (LifetimeLog::start()) { Console::log("Successfully opened lifetime log file and started lifetime logger."); }
