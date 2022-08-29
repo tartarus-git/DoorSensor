@@ -144,6 +144,7 @@ int main() {
 
    	signal(SIGINT, signalHandler);
 	signal(SIGTERM, signalHandler);
+	signal(SIGHUP, signalHandler);
 
 	Console::log("Signal handler initialized. Starting lifetime logger...");
 
